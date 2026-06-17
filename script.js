@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
    MIDNIGHT BILLIARDS — script.js  v3 Premium Progression
 ═══════════════════════════════════════════════════════════════ */
+
 'use strict';
+
 // ── Constants ──────────────────────────────────────────────────
 const BALL_RADIUS = 11;
 const FRICTION = 0.986;
@@ -11,6 +13,7 @@ const CUSHION_BOUNCE = 0.72;
 const BALL_BOUNCE = 0.88;
 const MAX_POWER = 22;
 const CUSHION = 34;
+
 // ── Rarity Config ──────────────────────────────────────────────
 const RARITIES = {
   common:    { label: 'Common',    color: '#8a8a8a', glow: 'rgba(138,138,138,0.3)' },
@@ -20,6 +23,7 @@ const RARITIES = {
   legendary: { label: 'Legendary', color: '#f39c12', glow: 'rgba(243,156,18,0.3)' },
   mythic:    { label: 'Mythic',    color: '#e74c3c', glow: 'rgba(231,76,60,0.4)' },
 };
+
 // ── Ball Colors ────────────────────────────────────────────────
 const BALL_COLORS = {
   1:{color:'#f5c518',stripe:false},2:{color:'#1a55c0',stripe:false},
@@ -35,8 +39,10 @@ const BALL_COLORS = {
   20:{color:'#1a55c0',stripe:false},21:{color:'#ff69b4',stripe:false},
   22:{color:'#111111',stripe:false},
 };
+
 // ── XP Table ───────────────────────────────────────────────────
 function xpForLevel(lvl) { return Math.floor(200 * Math.pow(lvl, 1.4)); }
+
 // ── Cue Sticks Database (200+) ────────────────────────────────
 const CUES_DB = (() => {
   const cueData = [
@@ -280,6 +286,7 @@ const CUES_DB = (() => {
   ];
   return cueData;
 })();
+
 // ── Avatars Database (200+) ────────────────────────────────────
 const AVATARS_DB = (() => {
   const sets = [
@@ -306,6 +313,7 @@ const AVATARS_DB = (() => {
   });
   return avatars;
 })();
+
 // ── Titles Database (100+) ─────────────────────────────────────
 const TITLES_DB = [
   {id:'rookie',name:'Rookie',price:0,rarity:'common',unlockReq:null},
@@ -376,10 +384,12 @@ const TITLES_DB = [
     unlockReq: null
   })),
 ];
+
 // ── Achievements Database (200+) ───────────────────────────────
 const ACHIEVEMENTS_DB = (() => {
   const list = [];
   const push = (id,name,desc,icon,cat,coins,xp,target,statKey) => list.push({id,name,desc,icon,cat,coins,xp,target,statKey});
+
   // Beginner (25)
   push('first_game','First Game','Play your first game','🎱','beginner',50,100,1,'gamesPlayed');
   push('first_win','First Victory','Win your first game','🏆','beginner',100,200,1,'wins');
@@ -406,6 +416,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('reach_lvl10','Level 10','Reach Level 10','🌟','beginner',500,0,10,'level');
   push('chat_challenge','Challenge Accepted','Complete your first challenge','📋','beginner',150,300,1,'challengesDone');
   push('open_shop','Window Shopping','Open the shop','🛒','beginner',25,50,1,'shopOpens');
+
   // Skill (40)
   push('bank_5','Bank Shot','Make 5 bank shots','↗️','skill',100,200,5,'bankShots');
   push('bank_25','Bank Artist','Make 25 bank shots','🎨','skill',250,500,25,'bankShots');
@@ -447,6 +458,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('nine_on_break','Nine on Break','Pocket 9-ball on the break','⭐','skill',400,800,1,'nineOnBreak');
   push('run_out_8','Run Out','Pocket all 8 balls in a row','🏃','skill',600,1200,1,'runOuts');
   push('all_stripes','Full Stripes','Pocket all 7 stripes in a row','↕️','skill',400,800,1,'fullStripes');
+
   // Win Achievements (30)
   push('win_10','Ten Wins','Win 10 games','🏅','wins',300,600,10,'wins');
   push('win_25','25 Wins','Win 25 games','🥉','wins',500,1000,25,'wins');
@@ -478,6 +490,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('daily_win','Daily Winner','Win on 7 consecutive days','📅','wins',500,1000,7,'loginStreak');
   push('monthly_win','Monthly Grinder','Win 50 games in a month','📆','wins',2000,4000,50,'monthlyWins');
   push('yearly_champion','Yearly Champ','Win 365 games total','🏆','wins',10000,20000,365,'wins');
+
   // Streak Achievements (20)
   push('streak_2','Hot Pair','Win 2 in a row','🔥','streak',100,200,2,'bestStreak');
   push('streak_3','Hat Trick','Win 3 in a row','🔥','streak',200,400,3,'bestStreak');
@@ -499,6 +512,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('win_daily_5','Daily Five','Win 5 games today','📅','streak',400,800,5,'dailyWins');
   push('no_loss_10','Unbroken','Play 10 games without losing','🛡️','streak',1000,2000,10,'noLossStreak');
   push('no_foul_5','Clean Streak','Play 5 games without a foul','✅','streak',500,1000,5,'noFoulGames');
+
   // Coin Achievements (20)
   push('earn_100c','Penny Saved','Earn 100 coins','🪙','coins',25,50,100,'totalCoinsEarned');
   push('earn_1000c','Four Figures','Earn 1,000 coins','🪙','coins',100,200,1000,'totalCoinsEarned');
@@ -520,6 +534,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('save_50000','Big Saver','Save up 50,000 coins at once','🐖','coins',1000,2000,50000,'currentCoins');
   push('save_100000','Vault','Save 100,000 coins at once','🏦','coins',2000,4000,100000,'currentCoins');
   push('rich_get_richer','Rich Get Richer','Have 500,000 coins at once','💸','coins',5000,10000,500000,'currentCoins');
+
   // Collection (20)
   push('buy_cue','First Cue','Buy your first cue stick','🎱','collection',100,200,1,'cuesOwned');
   push('own_5_cues','Cue Starter','Own 5 cue sticks','🎱','collection',300,600,5,'cuesOwned');
@@ -541,6 +556,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('own_event_item','Event Hunter','Own an event item','🎉','collection',500,1000,1,'eventItems');
   push('full_set','Full Set','Own a cue, avatar and title of same rarity','🎯','collection',1500,3000,1,'fullSets');
   push('all_rarities','Rainbow Collector','Own items of all rarities','🌈','collection',3000,6000,6,'raritiesOwned');
+
   // Challenge (15)
   push('ch_1','First Challenge','Complete 1 challenge','📋','challenge',100,200,1,'challengesDone');
   push('ch_5','Challenge Starter','Complete 5 challenges','📋','challenge',300,600,5,'challengesDone');
@@ -557,6 +573,7 @@ const ACHIEVEMENTS_DB = (() => {
   push('ch_variety','Variety Show','Complete daily, weekly and monthly','📋','challenge',800,1600,3,'challengeTypesDone');
   push('ch_fast','Speed Chalenger','Complete a challenge in 1 game','⚡','challenge',400,800,1,'fastChallenges');
   push('ch_200','Challenge God','Complete 200 total challenges','👑','challenge',10000,20000,200,'challengesDone');
+
   // Trick Shot (20)
   push('ts_1','Trickster','Pull off 1 trick shot','🪄','trickshot',200,400,1,'trickShots');
   push('ts_5','Magician','Pull off 5 trick shots','🪄','trickshot',500,1000,5,'trickShots');
@@ -578,8 +595,10 @@ const ACHIEVEMENTS_DB = (() => {
   push('ts_around','Around the Table','Pocket after hitting all 4 rails','🔄','trickshot',2000,4000,1,'allRailShots');
   push('ts_10_combo','10-Ball Combo','Pocket 10+ balls in one game without miss','🎱','trickshot',3000,6000,1,'tenBallRuns');
   push('ts_god','Shot God','Master all types of shots','🌟','trickshot',10000,20000,1,'shotTypes');
+
   return list;
 })();
+
 // ── Challenges Database ────────────────────────────────────────
 const CHALLENGES_TEMPLATES = {
   daily: [
@@ -644,6 +663,7 @@ const CHALLENGES_TEMPLATES = {
     {id:'m_all_modes',name:'Complete Tour',desc:'Win all 9 game modes this month.',icon:'🎱',coins:8000,xp:16000,target:9,statKey:'monthlyModeWins',type:'monthly'},
   ]
 };
+
 // ── Rules Database ─────────────────────────────────────────────
 const RULES_DB = {
   eightball:{title:'8-Ball Pool',icon:'8',sub:'Standard Rules',rules:[{h:'Objective',p:'Pocket all your group (solids or stripes) then legally pocket the 8-ball to win.'},{h:'Break',p:'The breaking player must hit the rack. If no balls pocket, opponent may accept or re-rack.'},{h:'Group Assignment',p:'Groups assigned on first legal pocket after break. Solid pockets = solids; stripe pockets = stripes.'},{h:'8-Ball',p:'The 8-ball may only be shot after clearing your group. Early 8-ball or scratch = loss.'},{h:'Ball in Hand',p:'On a foul, opponent gets ball-in-hand anywhere.'}],tips:[{icon:'🎯',title:'Break Power',text:'Hit the lead ball dead-center with max power for the best spread.'},{icon:'🔵',title:'Play Safe',text:'If no clear shot, play a safety.'},{icon:'🧮',title:'Plan Ahead',text:'Think two shots ahead.'},{icon:'8️⃣',title:'8-Ball Timing',text:"Don't rush the 8-ball."}],fouls:[{title:'Scratch',text:'Cue ball pocketed → Ball in hand.'},{title:'No Rail',text:'No ball touches cushion → Ball in hand.'},{title:'Wrong Ball First',text:"Hitting opponent's ball first → Ball in hand."},{title:'8-Ball Foul',text:'Early 8-ball or scratch on 8-ball → Immediate loss.'}]},
@@ -656,6 +676,7 @@ const RULES_DB = {
   bankpool:{title:'Bank Pool',icon:'↗',sub:'Bank Shot Rules',rules:[{h:'Objective',p:'First to bank 5 balls wins.'},{h:'Bank Only',text:'All shots must be banks.'}],tips:[{icon:'📐',title:'Use the Diamonds',text:'Read the diamond dots for bank angles.'}],fouls:[{title:'No Bank',text:'Ball spotted, no score.'}]},
   snooker:{title:'Snooker',icon:'S',sub:'Full Rules',rules:[{h:'Objective',p:'Score more points than opponent.'},{h:'Values',p:'Red=1, Yellow=2, Green=3, Brown=4, Blue=5, Pink=6, Black=7.'},{h:'Sequence',p:'Alternate red then color. Reds stay down, colors re-spotted.'}],tips:[{icon:'🎯',title:'Cue Ball Control',text:"Snooker is 90% position."},{icon:'🔴',title:'Black After Red',text:'Always target the black (7pts).'}],fouls:[{title:'Foul',text:'Minimum 4 pts to opponent.'},{title:'In-Off',text:'4pt penalty.'}]},
 };
+
 // ── Game Tips ──────────────────────────────────────────────────
 const GAME_TIPS = [
   "Click and drag from the cue ball to aim. Further = more power.",
@@ -673,12 +694,15 @@ const GAME_TIPS = [
   "Bank pool rewards reading the table diamonds.",
   "In one pocket, defense is as powerful as offense.",
 ];
+
 // ── Daily Login Rewards ────────────────────────────────────────
 const DAILY_REWARDS = [50, 75, 100, 125, 150, 200, 300];
+
 // ══════════════════════════════════════════════════════════════
 //  PLAYER DATA / SAVE SYSTEM
 // ══════════════════════════════════════════════════════════════
 const SAVE_KEY = 'midnight_billiards_save_v3';
+
 function defaultPlayer() {
   return {
     username: 'Player',
@@ -823,10 +847,13 @@ function defaultPlayer() {
     monthlyModeWins: 0,
   };
 }
+
 let player = defaultPlayer();
+
 function savePlayer() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(player)); } catch(e) {}
 }
+
 function loadPlayer() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -836,6 +863,7 @@ function loadPlayer() {
     }
   } catch(e) { player = defaultPlayer(); }
 }
+
 // ══════════════════════════════════════════════════════════════
 //  CHALLENGE SYSTEM
 // ══════════════════════════════════════════════════════════════
@@ -843,7 +871,9 @@ function generateChallenges() {
   const today = new Date().toDateString();
   const week = getWeekKey();
   const month = getMonthKey();
+
   if (!player.activeChallenges) player.activeChallenges = [];
+
   // Remove expired
   player.activeChallenges = player.activeChallenges.filter(c => {
     if (c.type === 'daily') return c.dateKey === today;
@@ -851,6 +881,7 @@ function generateChallenges() {
     if (c.type === 'monthly') return c.dateKey === month;
     return false;
   });
+
   // Generate daily (4 random)
   const hasDailies = player.activeChallenges.filter(c => c.type === 'daily').length > 0;
   if (!hasDailies) {
@@ -859,6 +890,7 @@ function generateChallenges() {
       player.activeChallenges.push({ ...tmpl, progress: 0, complete: false, dateKey: today });
     });
   }
+
   // Weekly (3)
   const hasWeeklies = player.activeChallenges.filter(c => c.type === 'weekly').length > 0;
   if (!hasWeeklies) {
@@ -867,6 +899,7 @@ function generateChallenges() {
       player.activeChallenges.push({ ...tmpl, progress: 0, complete: false, dateKey: week });
     });
   }
+
   // Monthly (2)
   const hasMonthlies = player.activeChallenges.filter(c => c.type === 'monthly').length > 0;
   if (!hasMonthlies) {
@@ -875,18 +908,22 @@ function generateChallenges() {
       player.activeChallenges.push({ ...tmpl, progress: 0, complete: false, dateKey: month });
     });
   }
+
   savePlayer();
 }
+
 function getWeekKey() {
   const d = new Date();
   const jan1 = new Date(d.getFullYear(), 0, 1);
   const week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
   return `${d.getFullYear()}-W${week}`;
 }
+
 function getMonthKey() {
   const d = new Date();
   return `${d.getFullYear()}-${d.getMonth()}`;
 }
+
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -894,6 +931,7 @@ function shuffle(arr) {
   }
   return arr;
 }
+
 function updateChallengeProgress(statKey, amount = 1) {
   if (!player.activeChallenges) return;
   const newlyComplete = [];
@@ -927,6 +965,7 @@ function updateChallengeProgress(statKey, amount = 1) {
     renderChallengesPanel();
   }
 }
+
 // ══════════════════════════════════════════════════════════════
 //  ACHIEVEMENT SYSTEM
 // ══════════════════════════════════════════════════════════════
@@ -964,6 +1003,7 @@ function checkAchievements() {
   }
   return [];
 }
+
 // ══════════════════════════════════════════════════════════════
 //  XP & LEVEL SYSTEM
 // ══════════════════════════════════════════════════════════════
@@ -986,6 +1026,7 @@ function addXP(amount) {
     renderPlayPanel();
   }
 }
+
 // ══════════════════════════════════════════════════════════════
 //  COIN SYSTEM
 // ══════════════════════════════════════════════════════════════
@@ -999,6 +1040,7 @@ function awardCoins(amount, reason) {
   updateNavCoins();
   savePlayer();
 }
+
 function spendCoins(amount) {
   player.coins -= amount;
   player.currentCoins = player.coins;
@@ -1008,10 +1050,12 @@ function spendCoins(amount) {
   updateNavCoins();
   savePlayer();
 }
+
 function updateNavCoins() {
   const els = document.querySelectorAll('#navCoins,#shopCoins');
   els.forEach(el => { if (el) el.textContent = player.coins.toLocaleString(); });
 }
+
 // ══════════════════════════════════════════════════════════════
 //  DAILY LOGIN REWARDS
 // ══════════════════════════════════════════════════════════════
@@ -1034,6 +1078,7 @@ function checkDailyLogin() {
   }
   renderDailyLoginCard();
 }
+
 function claimDailyReward() {
   const today = new Date().toDateString();
   if (player.lastDailyDate === today) {
@@ -1052,12 +1097,14 @@ function claimDailyReward() {
   checkAchievements();
   savePlayer();
 }
+
 function renderDailyLoginCard() {
   const card = document.getElementById('dailyLoginCard');
   if (!card) return;
   const today = new Date().toDateString();
   const alreadyClaimed = player.lastDailyDate === today;
   const streak = player.loginStreak || 0;
+
   const daysEl = document.getElementById('dlcDays');
   daysEl.innerHTML = '';
   DAILY_REWARDS.forEach((coins, i) => {
@@ -1071,6 +1118,7 @@ function renderDailyLoginCard() {
     dot.title = `+${coins} 🪙`;
     daysEl.appendChild(dot);
   });
+
   const claimBtn = document.getElementById('btnClaimDaily');
   const daySpan = document.getElementById('dlcDay');
   const nextDay = (streak % 7) + 1;
@@ -1085,6 +1133,7 @@ function renderDailyLoginCard() {
     claimBtn.style.opacity = '1';
   }
 }
+
 // ══════════════════════════════════════════════════════════════
 //  HUB UI RENDERING
 // ══════════════════════════════════════════════════════════════
@@ -1101,6 +1150,7 @@ function renderHubUI() {
   renderRecentAchievementsSidebar();
   updateChallengeTimers();
 }
+
 function renderNavAvatar() {
   const av = AVATARS_DB.find(a => a.id === player.avatar);
   const emoji = av ? av.emoji : '🎱';
@@ -1111,6 +1161,7 @@ function renderNavAvatar() {
   const profileAv = document.getElementById('profileAvatar');
   if (profileAv) profileAv.textContent = emoji;
 }
+
 function renderPlayPanel() {
   const av = AVATARS_DB.find(a => a.id === player.avatar);
   const emoji = av ? av.emoji : '🎱';
@@ -1125,6 +1176,7 @@ function renderPlayPanel() {
   set('hubXpMax', maxXP);
   const fill = document.getElementById('hubXpFill');
   if (fill) fill.style.width = Math.min(100, (curXP / maxXP * 100)) + '%';
+
   // Quick stats
   set('qsWins', player.wins);
   const wr = player.gamesPlayed > 0 ? Math.round(player.wins / player.gamesPlayed * 100) : 0;
@@ -1132,17 +1184,21 @@ function renderPlayPanel() {
   set('qsStreak', player.bestStreak);
   set('qsBalls', player.ballsPocketed);
 }
+
 function renderShopPanel() {
   updateNavCoins();
 }
+
 let currentShopTab = 'cues';
 let currentShopSearch = '';
 let currentShopRarity = 'all';
 let currentShopOwner = 'all';
+
 function renderShopGrid() {
   const grid = document.getElementById('shopGrid');
   if (!grid) return;
   grid.innerHTML = '';
+
   let items = [];
   if (currentShopTab === 'cues') {
     items = CUES_DB.map(c => ({
@@ -1174,6 +1230,7 @@ function renderShopGrid() {
       ...featuredAvatars.map(a => ({id:a.id,name:a.name,rarity:a.rarity,price:Math.floor(a.price*0.9),emoji:a.emoji,desc:'⭐ Featured Deal! 10% off',type:'avatar',owned:player.avatarsOwned.includes(a.id),equipped:player.avatar===a.id})),
     ];
   }
+
   // Filter
   if (currentShopSearch) {
     const q = currentShopSearch.toLowerCase();
@@ -1182,6 +1239,7 @@ function renderShopGrid() {
   if (currentShopRarity !== 'all') items = items.filter(i => i.rarity === currentShopRarity);
   if (currentShopOwner === 'owned') items = items.filter(i => i.owned);
   if (currentShopOwner === 'unowned') items = items.filter(i => !i.owned);
+
   items.forEach(item => {
     const el = document.createElement('div');
     el.className = `shop-item${item.owned ? ' owned' : ''}${item.equipped ? ' equipped' : ''}`;
@@ -1198,11 +1256,14 @@ function renderShopGrid() {
     el.addEventListener('click', () => openPurchaseModal(item));
     grid.appendChild(el);
   });
+
   if (items.length === 0) {
     grid.innerHTML = '<div style="color:var(--text-dim);padding:40px;text-align:center;grid-column:1/-1">No items found.</div>';
   }
 }
+
 let pendingPurchaseItem = null;
+
 function openPurchaseModal(item) {
   pendingPurchaseItem = item;
   document.getElementById('purchasePreview').textContent = item.emoji;
@@ -1212,6 +1273,7 @@ function openPurchaseModal(item) {
   rarEl.className = `purchase-rarity rarity-${item.rarity}`;
   document.getElementById('purchaseDesc').textContent = item.desc || '';
   document.getElementById('purchasePrice').textContent = item.price.toLocaleString();
+
   const confirmBtn = document.getElementById('btnConfirmPurchase');
   if (item.owned) {
     if (item.equipped) {
@@ -1225,11 +1287,14 @@ function openPurchaseModal(item) {
     confirmBtn.textContent = `Buy for 🪙${item.price.toLocaleString()}`;
     confirmBtn.disabled = false;
   }
+
   document.getElementById('purchaseModal').classList.add('active');
 }
+
 function confirmPurchase() {
   const item = pendingPurchaseItem;
   if (!item) return;
+
   if (item.owned) {
     // Equip
     if (item.type === 'cue') player.equippedCue = item.id;
@@ -1241,11 +1306,14 @@ function confirmPurchase() {
     document.getElementById('purchaseModal').classList.remove('active');
     return;
   }
+
   if (player.coins < item.price) {
     showToast('❌ Not enough coins!', 'error'); return;
   }
+
   spendCoins(item.price);
   player.itemsBought++;
+
   if (item.type === 'cue') {
     player.cuesOwned.push(item.id);
     player.cuesOwned = [...new Set(player.cuesOwned)];
@@ -1269,6 +1337,7 @@ function confirmPurchase() {
     player.titlesOwned = [...new Set(player.titlesOwned)];
     player.equippedTitle = item.id;
   }
+
   // Update rarity coverage
   const rarities = new Set([
     ...player.cuesOwned.map(id => CUES_DB.find(c => c.id === id)?.rarity),
@@ -1276,6 +1345,7 @@ function confirmPurchase() {
   ].filter(Boolean));
   player.raritiesOwned = rarities.size;
   player.outfitComplete = player.equippedCue && player.avatar && player.equippedTitle ? 1 : 0;
+
   showToast(`🎉 Purchased: ${item.name}!`, 'success');
   checkAchievements();
   savePlayer();
@@ -1283,10 +1353,12 @@ function confirmPurchase() {
   document.getElementById('purchaseModal').classList.remove('active');
   updateChallengeProgress('itemsBought', 1);
 }
+
 function renderChallengesPanel(type = 'daily') {
   const grid = document.getElementById('challengesGrid');
   if (!grid) return;
   grid.innerHTML = '';
+
   const challenges = (player.activeChallenges || []).filter(c => c.type === type);
   challenges.forEach(ch => {
     const pct = Math.min(100, Math.round((ch.progress / ch.target) * 100));
@@ -1311,19 +1383,24 @@ function renderChallengesPanel(type = 'daily') {
     `;
     grid.appendChild(el);
   });
+
   if (challenges.length === 0) {
     grid.innerHTML = '<div style="color:var(--text-dim);padding:40px;text-align:center">No challenges available.</div>';
   }
 }
+
 function renderAchievementsPanel() {
   const grid = document.getElementById('achievementsGrid');
   if (!grid) return;
+
   const catFilter = document.getElementById('achCatFilter')?.value || 'all';
   const statusFilter = document.getElementById('achStatusFilter')?.value || 'all';
+
   let filtered = ACHIEVEMENTS_DB;
   if (catFilter !== 'all') filtered = filtered.filter(a => a.cat === catFilter);
   if (statusFilter === 'unlocked') filtered = filtered.filter(a => player.achievementsUnlocked.includes(a.id));
   if (statusFilter === 'locked') filtered = filtered.filter(a => !player.achievementsUnlocked.includes(a.id));
+
   grid.innerHTML = '';
   filtered.forEach(ach => {
     const unlocked = player.achievementsUnlocked.includes(ach.id);
@@ -1347,6 +1424,7 @@ function renderAchievementsPanel() {
     `;
     grid.appendChild(el);
   });
+
   // Update stats
   const total = player.achievementsUnlocked.length;
   const pct = Math.round(total / ACHIEVEMENTS_DB.length * 100);
@@ -1354,6 +1432,7 @@ function renderAchievementsPanel() {
   set('achPercent', pct + '%');
   set('achCoins', player.achievementCoinsEarned || 0);
 }
+
 function renderProfilePanel() {
   const av = AVATARS_DB.find(a => a.id === player.avatar);
   set('profileAvatar', av ? av.emoji : '🎱');
@@ -1364,6 +1443,7 @@ function renderProfilePanel() {
   set('profileLevel', player.level);
   const cue = CUES_DB.find(c => c.id === player.equippedCue);
   set('profileCue', cue ? `${cue.emoji} ${cue.name}` : '🎱 Oak Classic');
+
   set('stGames', player.gamesPlayed);
   set('stWins', player.wins);
   set('stLosses', player.losses);
@@ -1378,6 +1458,7 @@ function renderProfilePanel() {
   set('stXP', player.xp + (player.level > 1 ? Array.from({length:player.level-1},(_,i)=>xpForLevel(i+1)).reduce((a,b)=>a+b,0) : 0));
   set('stLevel', player.level);
 }
+
 function renderActiveChallengesSidebar() {
   const list = document.getElementById('activeChallengesList');
   if (!list) return;
@@ -1392,6 +1473,7 @@ function renderActiveChallengesSidebar() {
   });
   if (active.length === 0) list.innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:8px">No active challenges.</div>';
 }
+
 function renderRecentAchievementsSidebar() {
   const list = document.getElementById('recentAchievementsList');
   if (!list) return;
@@ -1407,6 +1489,7 @@ function renderRecentAchievementsSidebar() {
   });
   if (recent.length === 0) list.innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:8px">No achievements yet.</div>';
 }
+
 function updateChallengeTimers() {
   const now = new Date();
   const midnight = new Date(now); midnight.setHours(24,0,0,0);
@@ -1418,6 +1501,7 @@ function updateChallengeTimers() {
   const diffW = Math.round((endOfWeek - now) / 1000);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const diffM = Math.round((endOfMonth - now) / 1000);
+
   const fmt = s => {
     const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
     return `${h}h ${m}m`;
@@ -1426,6 +1510,7 @@ function updateChallengeTimers() {
   const wt = document.getElementById('weeklyTimer'); if (wt) wt.textContent = fmt(diffW);
   const mt = document.getElementById('monthlyTimer'); if (mt) mt.textContent = fmt(diffM);
 }
+
 // ══════════════════════════════════════════════════════════════
 //  TOAST NOTIFICATIONS
 // ══════════════════════════════════════════════════════════════
@@ -1437,6 +1522,7 @@ function showToast(msg, type = '') {
   container.appendChild(toast);
   setTimeout(() => toast.remove(), 3200);
 }
+
 // ══════════════════════════════════════════════════════════════
 //  REWARD POPUP
 // ══════════════════════════════════════════════════════════════
@@ -1448,6 +1534,7 @@ function showRewardPopup(title, sub, rewards) {
   popup.style.display = 'flex';
   setTimeout(() => { popup.style.display = 'none'; }, 3500);
 }
+
 // ══════════════════════════════════════════════════════════════
 //  AUTH LOGIC
 // ══════════════════════════════════════════════════════════════
@@ -1457,6 +1544,7 @@ function switchAuthTab(tab) {
   if (tab === 'login') document.getElementById('loginForm').classList.add('active');
   else if (tab === 'signup') document.getElementById('signupForm').classList.add('active');
 }
+
 function calcPasswordStrength(pw) {
   let score = 0;
   if (pw.length >= 8) score++;
@@ -1466,6 +1554,7 @@ function calcPasswordStrength(pw) {
   if (pw.length >= 14) score++;
   return score;
 }
+
 function updateStrengthMeter(pw) {
   const score = calcPasswordStrength(pw);
   const fill = document.getElementById('strengthFill');
@@ -1479,6 +1568,7 @@ function updateStrengthMeter(pw) {
   else if (score <= 4) { fill.style.background = 'var(--neon-green)'; label.textContent = 'Strong'; }
   else { fill.style.background = 'var(--gold)'; label.textContent = 'Excellent'; }
 }
+
 function handleLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pw = document.getElementById('loginPassword').value;
@@ -1494,6 +1584,7 @@ function handleLogin() {
     showToast('Invalid email or password.', 'error');
   }
 }
+
 function handleSignup() {
   const username = document.getElementById('signupUsername').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
@@ -1512,6 +1603,7 @@ function handleSignup() {
   showToast(`Welcome, ${username}! 🎉`, 'success');
   enterHub();
 }
+
 function handleGuest() {
   player = defaultPlayer();
   player.username = 'Guest_' + Math.floor(Math.random() * 9999);
@@ -1519,6 +1611,7 @@ function handleGuest() {
   player.loggedIn = true;
   enterHub();
 }
+
 function handleGoogleAuth() {
   // Firebase-ready stub — simulate Google login
   const name = 'Pooler' + Math.floor(Math.random() * 9999);
@@ -1533,6 +1626,7 @@ function handleGoogleAuth() {
   showToast('✓ Signed in with Google', 'success');
   enterHub();
 }
+
 function enterHub() {
   generateChallenges();
   checkDailyLogin();
@@ -1540,14 +1634,17 @@ function enterHub() {
   showScreen('hubScreen');
   renderHubUI();
 }
+
 function handleLogout() {
   savePlayer();
   showScreen('authScreen');
 }
+
 // ══════════════════════════════════════════════════════════════
 //  GAME STATE
 // ══════════════════════════════════════════════════════════════
 let canvas = null, ctx = null, W, H;
+
 let state = {
   mode:'eightball', gameMode:null, aiDifficulty:'medium',
   currentPlayer:0, balls:[], cueBall:null, pockets:[],
@@ -1562,11 +1659,13 @@ let state = {
   gameStartTime:0, gameBallsPocketed:0, gameFouls:0,
   gameMode2:'',
 };
+
 // ── Physics Constants ──────────────────────────────────────────
 function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 function lightenColor(hex,a){const n=parseInt(hex.slice(1),16);return`rgb(${Math.min(255,(n>>16)+a)},${Math.min(255,((n>>8)&0xff)+a)},${Math.min(255,(n&0xff)+a)})`;}
 function darkenColor(hex,a){const n=parseInt(hex.slice(1),16);return`rgb(${Math.max(0,(n>>16)-a)},${Math.max(0,((n>>8)&0xff)-a)},${Math.max(0,(n&0xff)-a)})`;}
+
 function setupTable(){
   const wrap=document.getElementById('tableWrap');
   let tW=Math.min(wrap.clientWidth*0.92,wrap.clientHeight*1.9*0.92);
@@ -1580,10 +1679,12 @@ function setupTable(){
     {x:px,y:H-py},{x:W/2,y:H-py},{x:W-px,y:H-py},
   ];
 }
+
 function makeBall(num,x,y){
   const info=BALL_COLORS[num]||{color:'#888',stripe:false};
   return{num,x,y,vx:0,vy:0,active:true,pocketed:false,color:info.color,stripe:info.stripe,radius:BALL_RADIUS};
 }
+
 function getRackPos(mode){
   const rackX=W*0.72,rackY=H/2,r=BALL_RADIUS*2.04,positions=[];
   const triangle=(nums)=>{let i=0;for(let row=0;row<5;row++)for(let col=0;col<=row;col++)positions.push({x:rackX+row*r*Math.cos(Math.PI/6),y:rackY+(col-row/2)*r,num:nums[i++]});};
@@ -1599,6 +1700,7 @@ function getRackPos(mode){
   }
   return positions;
 }
+
 function initGame(mode,gameMode){
   state.mode=mode; state.gameMode=gameMode;
   state.aiDifficulty=document.getElementById('aiDifficulty').value;
@@ -1610,13 +1712,16 @@ function initGame(mode,gameMode){
   state.onePocketScores=[0,0]; state.straightPoolScores=[0,0];
   state.straightPoolTarget=50; state.snookerRedPotted=false;
   state.gameStartTime=Date.now(); state.gameBallsPocketed=0; state.gameFouls=0;
+
   setupTable();
   state.cueBall=makeBall(0,W*0.27,H/2);
   state.cueBall.color='#f0ece0';
   const rackPositions=getRackPos(mode);
   state.balls=[state.cueBall,...rackPositions.map(p=>makeBall(p.num,p.x,p.y))];
+
   updateHUD(); updateBallRacks();
   showScreen('gameScreen');
+
   // Update daily game counters
   player.dailyGames++;
   if(mode==='eightball') player.daily8BallGames++;
@@ -1627,9 +1732,11 @@ function initGame(mode,gameMode){
   player.gamesPlayed++;
   updateChallengeProgress('dailyGames',1);
   savePlayer();
+
   rotateTips();
   if(!state.animFrame) gameLoop();
 }
+
 // ── Audio ──────────────────────────────────────────────────────
 let audioCtx=null;
 function getAC(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
